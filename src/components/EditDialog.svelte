@@ -5,6 +5,7 @@
   import type {Format} from "$lib/format";
   import FormatPicker from "./FormatPicker.svelte";
   import Base64Input from "./edit/Base64Input.svelte";
+  import QRInput from "./edit/QRInput.svelte";
 
   // Value
   export let initialValue: Uint8Array;
@@ -56,6 +57,7 @@
         {:else if format === 'B64'}
         <Base64Input bind:exportValue={value}/>
         {:else}
+        <QRInput bind:exportValue={value}></QRInput>
         {/if}
         <button on:click={save}>Save</button>
         <button on:click={cancel}>Cancel</button>
