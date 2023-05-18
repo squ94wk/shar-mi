@@ -2,14 +2,13 @@
   import '../public/wasm/wasm_exec';
 
   import {writable} from "svelte/store";
-  import EditDialog from "../components/EditDialog.svelte";
-  import {byteArrayToUtf8} from "$lib/bytearray";
 
   import wasmInit from '../public/wasm/shamir.wasm?init';
   import {onMount} from "svelte";
 
   import {getShamir} from "$lib/shamir";
   import type {Shamir} from "$lib/shamir";
+  import Card from "../components/card/Card.svelte";
 
   let shamir: Shamir;
 
@@ -24,13 +23,13 @@
     });
   })
 
-  interface Card {
+  interface Secret {
     id: number;
     value: Uint8Array;
   }
 
-  let cards: Card[];
-  const cardStore = writable<Card[]>([]);
+  let cards: Secret[];
+  const cardStore = writable<Secret[]>([]);
   cardStore.subscribe(c => {
     cards = c;
   })
@@ -41,7 +40,7 @@
       {
         id: nextID(),
         value: new Uint8Array([]),
-      } as Card,
+      } as Secret,
     ]);
   }
 
@@ -55,34 +54,8 @@
     return idCounter++;
   }
 
-  let editCardID = null;
-
-  function openEditCardDialog(id: number) {
-    if (editCardID) {
-      closeEditCardDialog()
-    }
-    editCardID = id;
-  }
-
-  function closeEditCardDialog() {
-    editCardID = null;
-  }
-
-  function saveEditCardDialog(event: { detail: { value: Uint8Array } }) {
-    cardStore.update(c => c.map(c => {
-      if (c.id === editCardID) {
-        c.value = event.detail.value;
-      }
-      return c;
-    }))
-    closeEditCardDialog();
-  }
-
-  function shamirSplit(id: number) {
-    let value = cards.find(c => c.id === id)?.value;
-    if (!value) {
-      return
-    }
+  function shamirSplit() {
+    let value = cards[0].value;
 
     shamir.split(value, 5, 3).then(shares => {
       cardStore.set(shares.map(v => ({
@@ -108,51 +81,68 @@
   }
 </script>
 
-<div>
-    <button on:click={shamirCombine}>Combine</button>
-    {#if editCardID != null}
-        <EditDialog initialValue="{cards.find(c => c.id === editCardID).value}" on:save={saveEditCardDialog}
-                    on:cancel={closeEditCardDialog}/>
-    {/if}
-    {#each cards as card}
-        <div class="card">
-            <span class="remove-button" on:click={() => removeCard(card.id)}>X</span>
-            <span class="edit-button" on:click={() => openEditCardDialog(card.id)}>Edit</span>
-            Card {card.id}
-            {byteArrayToUtf8(card.value)}
-            <button on:click={() => shamirSplit(card.id)}>Split</button>
-        </div>
-    {/each}
-
-    <div class="add-button" on:click={addCard}>Add</div>
+<div class="container">
+    <h1 class="header">Pass Share</h1>
+    <div class="navbar">
+        {#if cards.length === 1 && cards[0].value.length > 0}
+            <button on:click={shamirSplit}>Split</button>
+        {/if}
+        {#if cards.length > 2}
+            <button on:click={shamirCombine}>Combine</button>
+        {/if}
+    </div>
+    <div class="main">
+        {#each cards as card}
+            <Card bind:value={card.value} on:remove={() => removeCard(card.id)}></Card>
+        {/each}
+        <button class="add-button" on:click={addCard}>Add</button>
+    </div>
+    <div class="footer">
+        Copyright 2023 Josef Mende
+    </div>
 </div>
 
 <style>
-    .card {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-        position: relative;
-    }
-
-    .remove-button {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .edit-button {
-        position: absolute;
-        top: 5px;
-        right: 50px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
     .add-button {
         margin-top: 10px;
-        cursor: pointer;
+    }
+
+    /* Layout */
+    .container {
+        display: grid;
+        grid-template-columns: 1fr [content-start] min(100vw, 1200px) [content-end] 1fr;
+        grid-template-rows: auto auto 1fr;
+        min-height: calc(100vh + 10rem);
+    }
+
+    .container > * {
+        grid-column: content;
+    }
+
+    .container > *:last-child, .container > *:first-child {
+        grid-column: 1/span 3;
+    }
+
+    .header {
+        grid-row: 1;
+        background-color: #f1f1f1;
+        padding: 20px;
+    }
+
+    .navbar {
+        grid-row: 2;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .main {
+        grid-row: 3;
+        padding: 20px;
+    }
+
+    .footer {
+        background-color: #f1f1f1;
+        padding: 20px;
     }
 </style>
