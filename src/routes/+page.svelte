@@ -97,7 +97,7 @@
   function shamirCombine() {
     let values = cards.map(c => c.value);
 
-    shamir.combine(values).then(secret => {
+    shamir.combine(...values).then(secret => {
       cardStore.set([{
         id: nextID(),
         value: secret,

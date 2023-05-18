@@ -11,18 +11,19 @@ func Split(_ js.Value, args []js.Value) any {
 	n := args[1].Int()
 	k := args[2].Int()
 
-	split, err := shamir.Split(input, n, k)
-	if err != nil {
-		return err
-	}
+	return promiseOf[js.Value](func() (js.Value, error) {
+		split, err := shamir.Split(input, n, k)
+		if err != nil {
+			return js.Null(), err
+		}
 
-	result := make([]any, len(split))
+		result := make([]any, len(split))
+		for i := 0; i < len(split); i++ {
+			result[i] = uint8ArrayFrom(split[i])
+		}
 
-	for i := 0; i < len(split); i++ {
-		result[i] = uint8ArrayFrom(split[i])
-	}
-
-	return result
+		return js.ValueOf(result), nil
+	})
 }
 
 func Combine(_ js.Value, args []js.Value) any {
@@ -32,18 +33,43 @@ func Combine(_ js.Value, args []js.Value) any {
 		js.CopyBytesToGo(parts[i], args[i])
 	}
 
-	secret, err := shamir.Combine(parts)
-	if err != nil {
-		return err
-	}
+	return promiseOf[js.Value](func() (js.Value, error) {
+		secret, err := shamir.Combine(parts)
+		if err != nil {
+			return js.Null(), err
+		}
 
-	return uint8ArrayFrom(secret)
+		return uint8ArrayFrom(secret), nil
+	})
 }
 
 func uint8ArrayFrom(v []byte) js.Value {
 	out := js.Global().Get("Uint8Array").New(len(v))
 	js.CopyBytesToJS(out, v)
 	return out
+}
+
+func promiseOf[T any](f func() (T, error)) js.Value {
+	handler := js.FuncOf(func(this js.Value, args []js.Value) any {
+		resolve := args[0]
+		reject := args[1]
+
+		go func() {
+			result, err := f()
+			if err != nil {
+				errorConstructor := js.Global().Get("Error")
+				errorObject := errorConstructor.New(err.Error())
+				reject.Invoke(errorObject)
+			} else {
+				resolve.Invoke(js.ValueOf(result))
+			}
+		}()
+
+		return nil
+	})
+
+	promiseConstructor := js.Global().Get("Promise")
+	return promiseConstructor.New(handler)
 }
 
 func main() {
