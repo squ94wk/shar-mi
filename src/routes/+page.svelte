@@ -1,7 +1,28 @@
 <script lang="ts">
+  import '../public/wasm/wasm_exec';
+
   import {writable} from "svelte/store";
   import EditDialog from "../components/EditDialog.svelte";
   import {byteArrayToUtf8} from "$lib/bytearray";
+
+  import wasmInit from '../public/wasm/shamir.wasm?init';
+  import {onMount} from "svelte";
+
+  import {getShamir} from "$lib/shamir";
+  import type {Shamir} from "$lib/shamir";
+
+  let shamir: Shamir;
+
+  onMount(() => {
+    const go = new window.Go();
+    wasmInit(go.importObject).then(instance => {
+          go.run(instance);
+          shamir = getShamir();
+        }
+    ).catch(err => {
+      console.error(err)
+    });
+  })
 
   interface Card {
     id: number;
@@ -56,9 +77,39 @@
     }))
     closeEditCardDialog();
   }
+
+  function shamirSplit(id: number) {
+    let value = cards.find(c => c.id === id)?.value;
+    if (!value) {
+      return
+    }
+
+    shamir.split(value, 5, 3).then(shares => {
+      cardStore.set(shares.map(v => ({
+        id: nextID(),
+        value: v,
+      })))
+    }).catch(err => {
+      console.error(err)
+    });
+  }
+
+  function shamirCombine() {
+    let values = cards.map(c => c.value);
+
+    shamir.combine(values).then(secret => {
+      cardStore.set([{
+        id: nextID(),
+        value: secret,
+      }])
+    }).catch(err => {
+      console.error(err)
+    });
+  }
 </script>
 
 <div>
+    <button on:click={shamirCombine}>Combine</button>
     {#if editCardID != null}
         <EditDialog initialValue="{cards.find(c => c.id === editCardID).value}" on:save={saveEditCardDialog}
                     on:cancel={closeEditCardDialog}/>
@@ -67,7 +118,9 @@
         <div class="card">
             <span class="remove-button" on:click={() => removeCard(card.id)}>X</span>
             <span class="edit-button" on:click={() => openEditCardDialog(card.id)}>Edit</span>
-            Card {card.id}: {byteArrayToUtf8(card.value)}
+            Card {card.id}
+            {byteArrayToUtf8(card.value)}
+            <button on:click={() => shamirSplit(card.id)}>Split</button>
         </div>
     {/each}
 
