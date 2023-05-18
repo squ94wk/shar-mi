@@ -9,8 +9,12 @@
   import {getShamir} from "$lib/shamir";
   import type {Shamir} from "$lib/shamir";
   import Card from "../components/card/Card.svelte";
+  import FormatPicker from "../components/FormatPicker.svelte";
+  import {UTF8} from "$lib/format";
 
   let shamir: Shamir;
+
+  let format = UTF8;
 
   onMount(() => {
     const go = new window.Go();
@@ -96,6 +100,7 @@
 <div class="container">
     <h1 class="header">Pass Share</h1>
     <div class="navbar">
+        <FormatPicker bind:format={format}></FormatPicker>
         {#if cards.length === 1 && cards[0].value.length > 0}
             <button on:click={shamirSplit}>Split</button>
         {/if}
@@ -105,8 +110,11 @@
     </div>
     <div class="main">
         {#each cards as card}
-            <Card bind:value={card.value} on:updateValue={updateValue(card.id)}
-                  on:remove={() => removeCard(card.id)}></Card>
+            <Card format={format}
+                  value={card.value}
+                  on:updateValue={updateValue(card.id)}
+                  on:remove={() => removeCard(card.id)}>
+            </Card>
         {/each}
         <button class="add-button" on:click={addCard}>Add</button>
     </div>
