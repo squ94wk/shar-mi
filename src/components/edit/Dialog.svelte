@@ -1,11 +1,11 @@
 <script lang="ts">
   import {onMount} from 'svelte';
   import {createEventDispatcher} from 'svelte';
-  import Utf8Input from './Utf8Input.svelte';
   import type {Format} from "$lib/format";
   import FormatPicker from "../FormatPicker.svelte";
-  import Base64Input from "./Base64Input.svelte";
-  import QRInput from "./QRInput.svelte";
+  import Utf8Input from "../input/Utf8Input.svelte";
+  import Base64Input from "../input/Base64Input.svelte";
+  import QRInput from "../input/QRInput.svelte";
 
   // Value
   export let initialValue: Uint8Array;

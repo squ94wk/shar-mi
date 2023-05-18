@@ -48,6 +48,18 @@
     cardStore.update(c => c.filter(card => card.id !== id));
   }
 
+  function updateValue(id: number) {
+    return (event: { detail: { value: Uint8Array } }) => {
+      cardStore.update(cards => cards.map(c => {
+        if (c.id === id) {
+          c.value = event.detail.value;
+        }
+        return c
+      }));
+      console.log('handle', event);
+    }
+  }
+
   let idCounter = 0;
 
   function nextID() {
@@ -93,7 +105,8 @@
     </div>
     <div class="main">
         {#each cards as card}
-            <Card bind:value={card.value} on:remove={() => removeCard(card.id)}></Card>
+            <Card bind:value={card.value} on:updateValue={updateValue(card.id)}
+                  on:remove={() => removeCard(card.id)}></Card>
         {/each}
         <button class="add-button" on:click={addCard}>Add</button>
     </div>
