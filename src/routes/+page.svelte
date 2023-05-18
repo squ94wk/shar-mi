@@ -1,4 +1,6 @@
 <script lang="ts">
+  import "@fontsource/roboto";
+
   import '../public/wasm/wasm_exec';
 
   import {writable} from "svelte/store";
@@ -124,6 +126,10 @@
 </div>
 
 <style>
+    * {
+        font-family: 'Roboto', sans-serif;
+    }
+
     .add-button {
         margin-top: 10px;
     }
@@ -140,8 +146,8 @@
         grid-column: content;
     }
 
-    .container > *:last-child, .container > *:first-child {
-        grid-column: 1/span 3;
+    .container > *:is(:last-child, :first-child) {
+        grid-column: 1 / span 3;
     }
 
     .header {
@@ -152,8 +158,6 @@
 
     .navbar {
         grid-row: 2;
-        background-color: #333;
-        color: #fff;
         padding: 10px;
     }
 

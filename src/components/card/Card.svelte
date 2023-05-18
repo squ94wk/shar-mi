@@ -19,7 +19,6 @@
 
 <div class="card">
     <span class="remove-button" on:click={remove}>X</span>
-    Card
     <FormatPicker bind:format={format}></FormatPicker>
     {#if format === UTF8}
         <Utf8Input on:updateValue exportValue={value}></Utf8Input>
