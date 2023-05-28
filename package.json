@@ -34,9 +34,11 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@fontsource/noto-serif-display": "^5.0.1",
 		"@fontsource/roboto": "^4.5.8",
 		"@types/golang-wasm-exec": "^1.15.0",
 		"jsqr": "^1.4.0",
-		"qrcode": "^1.5.3"
+		"qrcode": "^1.5.3",
+		"svelte-material-icons": "^3.0.4"
 	}
 }

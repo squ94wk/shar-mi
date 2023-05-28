@@ -1,5 +1,6 @@
 <script lang="ts">
   import "@fontsource/roboto";
+  import "@fontsource/noto-serif-display/400.css";
 
   import '../public/wasm/wasm_exec';
 
@@ -100,14 +101,17 @@
 </script>
 
 <div class="container">
-    <h1 class="header">Pass Share</h1>
+    <div class="header">
+        <h1>&#x0283;ɦar mi</h1>
+        <div>Split secrets into parts and share them as QR codes</div>
+    </div>
     <div class="navbar">
         <FormatPicker bind:format={format}></FormatPicker>
         {#if cards.length === 1 && cards[0].value.length > 0}
-            <button on:click={shamirSplit}>Split</button>
+            <button class="button" on:click={shamirSplit}>Split</button>
         {/if}
         {#if cards.length > 2}
-            <button on:click={shamirCombine}>Combine</button>
+            <button class="button" on:click={shamirCombine}>Combine</button>
         {/if}
     </div>
     <div class="main">
@@ -118,56 +122,70 @@
                   on:remove={() => removeCard(card.id)}>
             </Card>
         {/each}
-        <button class="add-button" on:click={addCard}>Add</button>
+        <button class="button" on:click={addCard}>Add</button>
     </div>
     <div class="footer">
         Copyright 2023 Josef Mende
     </div>
 </div>
 
-<style>
-    * {
-        font-family: 'Roboto', sans-serif;
-    }
+<style lang="scss">
+  * {
+    font-family: 'Roboto', sans-serif;
+  }
 
-    .add-button {
-        margin-top: 10px;
-    }
+  /* Layout */
+  .container {
+    display: grid;
+    grid-template-columns: 1fr [content-start] min(100vw, 1200px) [content-end] 1fr;
+    grid-template-rows: auto auto 1fr;
+    min-height: calc(100vh + 10rem);
 
-    /* Layout */
-    .container {
-        display: grid;
-        grid-template-columns: 1fr [content-start] min(100vw, 1200px) [content-end] 1fr;
-        grid-template-rows: auto auto 1fr;
-        min-height: calc(100vh + 10rem);
+    > * {
+      grid-column: content;
     }
+  }
 
-    .container > * {
-        grid-column: content;
-    }
+  .header {
+    grid-row: 1;
+    grid-column: 1 / span 3;
+    padding: 40px;
 
-    .container > *:is(:last-child, :first-child) {
-        grid-column: 1 / span 3;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    .header {
-        grid-row: 1;
-        background-color: #f1f1f1;
-        padding: 20px;
-    }
+    background-color: #f1f1f1;
 
-    .navbar {
-        grid-row: 2;
-        padding: 10px;
+    h1 {
+      // FIXME: 'Sh' isn't displayed correctly, although the font should support it.
+      font-family: 'Noto Serif Display', serif;
+      font-size: 4em;
     }
+  }
 
-    .main {
-        grid-row: 3;
-        padding: 20px;
-    }
+  .navbar {
+    grid-row: 2;
+    padding: 20px 0;
 
-    .footer {
-        background-color: #f1f1f1;
-        padding: 20px;
-    }
+    display: flex;
+    gap: 1rem;
+  }
+
+  .main {
+    grid-row: 3;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+  }
+
+  .footer {
+    grid-column: 1 / span 3;
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+
+    background-color: #f1f1f1;
+  }
 </style>

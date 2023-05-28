@@ -1,1 +1,40 @@
-/* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+.button {
+  padding: 5px 10px;
+  border-color: rgba(0, 0, 0, 0.05);
+  border-style: solid;
+  border-width: 1px;
+
+  font-size: 0.8em;
+
+  border-radius: 4px;
+
+  // hover / checked combos
+  background-color: transparent;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  &:has(input:checked) {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  transition: background-color 100ms ease-in-out;
+}
+
+.button-group {
+  > .button {
+    border-radius: 0;
+    // round corners
+    &:first-of-type {
+      border-radius: 4px 0 0 4px;
+    }
+    &:last-of-type {
+      border-radius: 0 4px 4px 0;
+    }
+
+    // collapse border with neighbor
+    &:not(:first-of-type) {
+      margin-left: -1px;
+    }
+  }
+}

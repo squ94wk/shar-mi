@@ -7,6 +7,8 @@
   import Base64Input from "../input/Base64Input.svelte";
   import QRInput from "../input/QRInput.svelte";
 
+  import Delete from "svelte-material-icons/Delete.svelte";
+
   export let value: Uint8Array;
   export let format: Format;
 
@@ -18,8 +20,12 @@
 </script>
 
 <div class="card">
-    <span class="remove-button" on:click={remove}>X</span>
-    <FormatPicker bind:format={format}></FormatPicker>
+    <div class="card-header">
+        <FormatPicker bind:format={format}></FormatPicker>
+        <div class="remove-button" on:click={remove}>
+            <Delete class="remove-button"></Delete>
+        </div>
+    </div>
     {#if format === UTF8}
         <Utf8Input on:updateValue exportValue={value}></Utf8Input>
     {:else if format === B64}
@@ -29,19 +35,32 @@
     {/if}
 </div>
 
-<style>
-    .card {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-        position: relative;
+<style lang="scss">
+  .card {
+    display: grid;
+    row-gap: 1rem;
+    padding: 1rem;
+
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .remove-button {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin: auto 0;
+
+    color: rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.5);
     }
 
-    .remove-button {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
+    transition: color 100ms ease-in-out;
+  }
 </style>
