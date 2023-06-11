@@ -1,7 +1,8 @@
 <script lang="ts">
   import {onMount, onDestroy, createEventDispatcher} from 'svelte';
-
   import jsQR from "jsqr";
+
+  export let deviceID: string;
 
   let canvas;
   let ctx;
@@ -25,14 +26,21 @@
   }
 
   onMount(() => {
-    navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
+    let constraints = {
+      video: {
+        facingMode: 'environment',
+        deviceId: {
+          exact: deviceID,
+        },
+      },
+    };
+    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video = document.createElement('video');
       video.srcObject = stream;
       video.autoplay = true;
       video.onloadedmetadata = () => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        console.log(canvas);
         ctx = canvas.getContext('2d');
         requestAnimationFrame(draw);
       };

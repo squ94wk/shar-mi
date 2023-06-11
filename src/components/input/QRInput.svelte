@@ -13,6 +13,12 @@
 
   // let error;
 
+  let devices: {
+    id: string,
+    name: string,
+  }[];
+  let deviceID: string;
+
   function edit() {
     editable = true;
   }
@@ -38,6 +44,20 @@
     }
   }
 
+  $: {
+    if (editable && !devices) {
+      navigator.mediaDevices.enumerateDevices().then((media) => {
+        devices = media.filter(d => d.kind == 'videoinput').map(d => ({
+          id: d.deviceId,
+          name: d.label,
+        }));
+        if (devices.length > 0) {
+          deviceID = devices[0].id
+        }
+      });
+    }
+  }
+
   function submit(event) {
     if (!event.detail.code) {
       editable = false;
@@ -53,35 +73,65 @@
 </script>
 
 <div class="container">
-    <div class="qr-container">
-        <canvas bind:this={canvas}></canvas>
-        <button class="button" on:click={edit}>Replace
-            <Camera/>
-        </button>
-    </div>
     {#if editable}
-        <ScannerQR on:scanComplete={submit}></ScannerQR>
+        <div class="options">
+            {#if devices && devices.length > 1}
+                <select class="device-selector" bind:value={deviceID}>
+                    {#each devices as d}
+                        <option value="{d.id}">{d.name}</option>
+                    {/each}
+                </select>
+            {/if}
+        </div>
+        {#if deviceID}
+            <!-- Recreate scanner if deviceID changes -->
+            {#each [deviceID] as id (deviceID)}
+                <ScannerQR deviceID="{id}" on:scanComplete={submit}></ScannerQR>
+            {/each}
+        {/if}
+        <div class="actions">
+            <button class="cancel" on:click={() => editable = false}>Cancel</button>
+        </div>
+    {:else}
+        <canvas class="canvas" bind:this={canvas}></canvas>
+        <div class="actions">
+            <button class="replace" on:click={edit}>
+                Replace
+                <Camera color="rgba(0, 0, 0, 0.9)"/>
+            </button>
+        </div>
     {/if}
 </div>
 
 <style lang="scss">
-  .qr-container {
+  .container {
     max-width: 16rem;
 
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 1rem;
-    align-items: center;
     margin-left: auto;
     margin-right: auto;
+  }
 
+  .options {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .canvas {
     > canvas {
-      width: 100%;
       aspect-ratio: 1 / 1;
-    }
-
-    button {
-      width: 100%;
     }
   }
 </style>
