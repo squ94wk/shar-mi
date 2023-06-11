@@ -1,44 +1,16 @@
-# pass-share
-A browser utility to:
+# Sharmi
+A simple browser utility to:
 
 - share passwords using QR codes
 - split passwords using shamir
 
-# create-svelte
+## Idea
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Let's say you have a secret that wouldn't be recoverable when lost, but you couldn't memorize, e.g. master password.
 
-## Creating a project
+This app allows you to split the secret in multiple shares and distribute them e.g. printed as QR codes.
+The shares themselves are considered secrets, but only a certain number of them together allow to reconstruct the original secret.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## About
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+This app was created using **Svelte Kit** and **WASM** as an experiment how easy it is to create something using **ChatGPT** in a somewhat unfamiliar domain.
