@@ -166,7 +166,7 @@
 
   .navbar {
     grid-row: 2;
-    padding: 20px 0;
+    padding: 1rem;
 
     display: flex;
     gap: 1rem;
@@ -174,6 +174,8 @@
 
   .main {
     grid-row: 3;
+    padding: 1rem;
+
     display: flex;
     flex-direction: column;
     row-gap: 1rem;

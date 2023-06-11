@@ -7,7 +7,7 @@
   import Base64Input from "../input/Base64Input.svelte";
   import QRInput from "../input/QRInput.svelte";
 
-  import Delete from "svelte-material-icons/Delete.svelte";
+  import Close from "svelte-material-icons/Close.svelte";
 
   export let value: Uint8Array;
   export let format: Format;
@@ -23,7 +23,7 @@
     <div class="card-header">
         <FormatPicker bind:format={format}></FormatPicker>
         <div class="remove-button" on:click={remove}>
-            <Delete class="remove-button"></Delete>
+            <Close class="remove-button"></Close>
         </div>
     </div>
     {#if format === UTF8}

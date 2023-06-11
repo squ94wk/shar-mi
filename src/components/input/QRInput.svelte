@@ -105,7 +105,7 @@
 
 <style lang="scss">
   .container {
-    max-width: 16rem;
+    max-width: 100%;
 
     display: flex;
     flex-direction: column;
