@@ -109,7 +109,7 @@
     </div>
     <div class="navbar">
         <FormatPicker bind:format={format}></FormatPicker>
-        <button on:click={() => opaque = !opaque}>
+        <button class:opaque={!opaque} on:click={() => opaque = !opaque}>
             {#if opaque}
                 <EyeOff/>
             {:else}
@@ -199,5 +199,10 @@
     justify-content: center;
 
     background-color: #f1f1f1;
+  }
+
+  .opaque {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-color: rgba(0, 0, 0, 0.15);
   }
 </style>
