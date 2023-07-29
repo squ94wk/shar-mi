@@ -128,10 +128,4 @@
     gap: 1rem;
     align-items: stretch;
   }
-
-  .canvas {
-    > canvas {
-      aspect-ratio: 1 / 1;
-    }
-  }
 </style>

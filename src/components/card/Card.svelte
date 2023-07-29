@@ -23,7 +23,7 @@
     <div class="card-header">
         <FormatPicker bind:format={format}></FormatPicker>
         <div class="remove-button" on:click={remove}>
-            <Close class="remove-button"></Close>
+            <Close class="remove-button"/>
         </div>
     </div>
     {#if format === UTF8}

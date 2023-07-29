@@ -63,7 +63,6 @@
         }
         return c
       }));
-      console.log('handle', event);
     }
   }
 
