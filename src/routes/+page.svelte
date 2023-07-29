@@ -14,10 +14,13 @@
   import Card from "../components/card/Card.svelte";
   import FormatPicker from "../components/FormatPicker.svelte";
   import {UTF8} from "$lib/format";
+  import Eye from "svelte-material-icons/Eye.svelte";
+  import EyeOff from "svelte-material-icons/EyeOff.svelte";
 
   let shamir: Shamir;
 
   let format = UTF8;
+  let opaque = true;
 
   onMount(() => {
     const go = new window.Go();
@@ -106,6 +109,13 @@
     </div>
     <div class="navbar">
         <FormatPicker bind:format={format}></FormatPicker>
+        <button on:click={() => opaque = !opaque}>
+            {#if opaque}
+                <EyeOff/>
+            {:else}
+                <Eye/>
+            {/if}
+        </button>
         {#if cards.length === 1 && cards[0].value.length > 0}
             <button class="button" on:click={shamirSplit}>Split</button>
         {/if}
@@ -116,6 +126,7 @@
     <div class="main">
         {#each cards as card}
             <Card format={format}
+                  opaque={opaque}
                   value={card.value}
                   on:updateValue={updateValue(card.id)}
                   on:remove={() => removeCard(card.id)}>

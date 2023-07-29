@@ -2,10 +2,13 @@
   import {createEventDispatcher} from "svelte";
   import {byteArrayToUtf8, utf8ToByteArray} from "$lib/bytearray";
   import Copy from "svelte-material-icons/ContentCopy.svelte";
+  import Eye from "svelte-material-icons/Eye.svelte";
+  import EyeOff from "svelte-material-icons/EyeOff.svelte";
 
   export let exportValue;
   let formValue: string;
   let editable = false;
+  export let opaque = true;
   let inputField;
   const dispatch = createEventDispatcher();
 
@@ -22,6 +25,10 @@
       value: utf8ToByteArray(formValue),
     });
     editable = false;
+  }
+
+  function toggleOpaque() {
+    opaque = !opaque;
   }
 
   function copyToClipboard() {
@@ -42,7 +49,18 @@
 
 <div>
     <form class:editable={editable} on:click={edit} on:submit={submit} on:focusout={submit}>
+        {#if opaque}
+        <input type="password" placeholder="secret" bind:this={inputField} on:focusin={edit} bind:value={formValue}>
+        {:else}
         <input type="text" placeholder="secret" bind:this={inputField} on:focusin={edit} bind:value={formValue}>
+        {/if}
+        <button on:click={toggleOpaque}>
+            {#if opaque}
+            <Eye/>
+            {:else}
+            <EyeOff/>
+            {/if}
+        </button>
         <button on:click={copyToClipboard}>
             <Copy/>
         </button>
@@ -65,10 +83,21 @@
       border: none;
       outline: none;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
-      border-radius: 0 4px 4px 0;
-      margin-left: 1px;
 
       color: rgba(0, 0, 0, 0.5);
+    }
+
+    *:first-child {
+      border-radius: 4px 0 0 4px;
+    }
+    *:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+    *:not(:first-child):not(:last-child) {
+      border-radius: 0;
+    }
+    *:not(:first-child) {
+      margin-left: 1px;
     }
 
     input {
@@ -77,7 +106,6 @@
       border: none;
       outline: none;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
-      border-radius: 4px 0 0 4px;
 
       transition: box-shadow 100ms linear;
 

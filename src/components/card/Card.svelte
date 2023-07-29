@@ -11,6 +11,7 @@
 
   export let value: Uint8Array;
   export let format: Format;
+  export let opaque: boolean;
 
   const dispatch = createEventDispatcher();
 
@@ -27,7 +28,7 @@
         </div>
     </div>
     {#if format === UTF8}
-        <Utf8Input on:updateValue exportValue={value}></Utf8Input>
+        <Utf8Input on:updateValue exportValue={value} opaque={opaque}></Utf8Input>
     {:else if format === B64}
         <Base64Input on:updateValue exportValue={value}></Base64Input>
     {:else}
