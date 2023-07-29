@@ -1,4 +1,6 @@
 # Sharmi
+
+The app is hosted with GitHub Pages at <https://squ94wk.github.io/sharmi>.
 A simple browser utility to:
 
 - share passwords using QR codes
