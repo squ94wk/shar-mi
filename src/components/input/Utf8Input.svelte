@@ -1,6 +1,7 @@
 <script lang="ts">
   import {createEventDispatcher} from "svelte";
   import {byteArrayToUtf8, utf8ToByteArray} from "$lib/bytearray";
+  import Copy from "svelte-material-icons/ContentCopy.svelte";
 
   export let exportValue;
   let formValue: string;
@@ -21,6 +22,15 @@
     editable = false;
   }
 
+  function copyToClipboard() {
+    if (editable) {
+      submit();
+    }
+    if (exportValue && exportValue.length > 0) {
+      navigator.clipboard.writeText(byteArrayToUtf8(exportValue));
+    }
+  }
+
   $: {
     if (!editable && exportValue && exportValue.length > 0) {
       formValue = byteArrayToUtf8(exportValue);
@@ -31,18 +41,41 @@
 <div>
     <form class:editable={editable} on:click={edit} on:submit={submit} on:focusout={submit}>
         <input type="text" placeholder="secret" bind:this={inputField} on:focusin={edit} bind:value={formValue}>
+        <button on:click={copyToClipboard}>
+            <Copy/>
+        </button>
     </form>
 </div>
 
 <style lang="scss">
   form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+
+    button {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      // "merge" with input
+      border: none;
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+      border-radius: 0 4px 4px 0;
+      margin-left: 1px;
+
+      color: rgba(0, 0, 0, 0.5);
+    }
+
     input {
       width: 100%;
       padding: 5px;
       border: none;
       outline: none;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
-      border-radius: 4px;
+      border-radius: 4px 0 0 4px;
 
       transition: box-shadow 100ms linear;
 
