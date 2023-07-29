@@ -10,9 +10,11 @@
   const dispatch = createEventDispatcher();
 
   function edit() {
-    editable = true;
-    formValue = byteArrayToUtf8(exportValue);
-    inputField.focus();
+    if (!editable) {
+      editable = true;
+      formValue = byteArrayToUtf8(exportValue);
+      inputField.focus();
+    }
   }
 
   function submit() {
